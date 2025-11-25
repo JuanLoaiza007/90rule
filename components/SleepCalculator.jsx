@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Moon, Clock, RefreshCw } from "lucide-react";
+import { Moon, Clock, RefreshCw, Sparkles } from "lucide-react";
 import { calculateWakeUpTimes, formatWakeTime } from "@/lib/sleepCalculator";
 
 function WakeUpSuggestion({
@@ -149,7 +149,7 @@ export default function SleepCalculator({ t }) {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Clock className="w-5 h-5" />
+              <Sparkles className="w-5 h-5" />
               {t("suggestedTimes")}
             </CardTitle>
           </CardHeader>
