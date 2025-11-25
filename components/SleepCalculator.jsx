@@ -10,6 +10,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Moon, Clock, RefreshCw, Sparkles } from "lucide-react";
 import { calculateWakeUpTimes, formatWakeTime } from "@/lib/sleepCalculator";
 import useLanguageStore from "@/lib/languageStore";
+import CycleInfoDialog from "@/components/CycleInfoDialog";
 
 function WakeUpSuggestion({
   suggestion,
@@ -17,6 +18,7 @@ function WakeUpSuggestion({
   showInHours,
   onToggleFormat,
   onToggleTime,
+  onClickBadge,
   translations,
 }) {
   const { cycles, totalMinutes, wakeTime } = suggestion;
@@ -50,7 +52,10 @@ function WakeUpSuggestion({
         >
           {displayTime}
         </span>
-        <Badge className={getBadgeClass()}>
+        <Badge
+          className={`${getBadgeClass()} cursor-pointer w-16 justify-center`}
+          onClick={() => onClickBadge(cycles)}
+        >
           {cycles}{" "}
           {cycles === 1 ? translations.cycles : translations.cyclesPlural}
         </Badge>
@@ -80,6 +85,8 @@ export default function SleepCalculator() {
     }
     return false;
   });
+  const [selectedCycles, setSelectedCycles] = useState(null);
+  const [openDialog, setOpenDialog] = useState(false);
 
   useEffect(() => {
     localStorage.setItem("use12Hour", use12Hour);
@@ -98,6 +105,11 @@ export default function SleepCalculator() {
     }
     return [];
   }, [bedTime, latency]);
+
+  const handleClickBadge = (cycles) => {
+    setSelectedCycles(cycles);
+    setOpenDialog(true);
+  };
 
   return (
     <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -167,6 +179,7 @@ export default function SleepCalculator() {
                   showInHours={showInHours}
                   onToggleFormat={() => setUse12Hour(!use12Hour)}
                   onToggleTime={() => setShowInHours(!showInHours)}
+                  onClickBadge={handleClickBadge}
                   translations={translations}
                 />
               ))}
@@ -174,6 +187,13 @@ export default function SleepCalculator() {
           </CardContent>
         </Card>
       )}
+
+      <CycleInfoDialog
+        open={openDialog}
+        onOpenChange={setOpenDialog}
+        cycles={selectedCycles}
+        translations={translations}
+      />
     </div>
   );
 }

@@ -1,15 +1,12 @@
-import { Geist, Geist_Mono } from "next/font/google";
+import { Onest } from "next/font/google";
 import "./globals.css";
 import { LanguageProvider } from "@/lib/LanguageContext";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const CustomFont = Onest({
   subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
+  fallback: ["Inter", "sans-serif"],
 });
 
 export const metadata = {
@@ -21,9 +18,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      <body className={`${CustomFont.className} antialiased`}>
         <LanguageProvider>{children}</LanguageProvider>
       </body>
     </html>
