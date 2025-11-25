@@ -1,10 +1,9 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Toggle } from "@/components/ui/toggle";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Moon, Clock, RefreshCw } from "lucide-react";
@@ -14,7 +13,8 @@ function WakeUpSuggestion({
   suggestion,
   use12Hour,
   showInHours,
-  onToggleHours,
+  onToggleFormat,
+  onToggleTime,
   t,
 }) {
   const { cycles, totalMinutes, wakeTime } = suggestion;
@@ -34,14 +34,17 @@ function WakeUpSuggestion({
     <div className="flex items-center justify-between p-3 border rounded-lg">
       <div className="flex items-center gap-2">
         <Clock className="w-4 h-4" />
-        <span className="font-medium">
+        <span
+          className="font-medium cursor-pointer hover:underline"
+          onClick={onToggleFormat}
+        >
           {formatWakeTime(wakeTime, use12Hour)}
         </span>
       </div>
       <div className="flex items-center gap-2">
         <span
           className="text-sm text-muted-foreground cursor-pointer hover:underline"
-          onClick={onToggleHours}
+          onClick={onToggleTime}
         >
           {displayTime}
         </span>
@@ -61,8 +64,26 @@ export default function SleepCalculator({ t }) {
 
   const [bedTime, setBedTime] = useState(() => getCurrentTime());
   const [latency, setLatency] = useState(15);
-  const [use12Hour, setUse12Hour] = useState(false);
-  const [showInHours, setShowInHours] = useState(false);
+  const [use12Hour, setUse12Hour] = useState(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("use12Hour") === "true";
+    }
+    return false;
+  });
+  const [showInHours, setShowInHours] = useState(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("showInHours") === "true";
+    }
+    return false;
+  });
+
+  useEffect(() => {
+    localStorage.setItem("use12Hour", use12Hour);
+  }, [use12Hour]);
+
+  useEffect(() => {
+    localStorage.setItem("showInHours", showInHours);
+  }, [showInHours]);
 
   const suggestions = useMemo(() => {
     const isValidTime = /^([01]\d|2[0-3]):([0-5]\d)$/.test(bedTime);
@@ -121,17 +142,6 @@ export default function SleepCalculator({ t }) {
               className="mt-1"
             />
           </div>
-
-          <div className="flex items-center justify-between">
-            <Label>{t("timeFormat")}</Label>
-            <Toggle
-              pressed={use12Hour}
-              onPressedChange={setUse12Hour}
-              aria-label="Toggle 12/24 hour format"
-            >
-              {use12Hour ? "12h" : "24h"}
-            </Toggle>
-          </div>
         </CardContent>
       </Card>
 
@@ -151,7 +161,8 @@ export default function SleepCalculator({ t }) {
                   suggestion={suggestion}
                   use12Hour={use12Hour}
                   showInHours={showInHours}
-                  onToggleHours={() => setShowInHours(!showInHours)}
+                  onToggleFormat={() => setUse12Hour(!use12Hour)}
+                  onToggleTime={() => setShowInHours(!showInHours)}
                   t={t}
                 />
               ))}
