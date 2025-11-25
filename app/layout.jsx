@@ -14,6 +14,17 @@ export const metadata = {
   title: "90Rule",
   description:
     "A precise sleep cycle calculator designed to help you wake up feeling refreshed and energized",
+  manifest: "/manifest.json",
+  themeColor: "#000000",
+  viewport: "width=device-width, initial-scale=1",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "90Rule",
+  },
+  icons: {
+    apple: "/90rule.svg",
+  },
 };
 
 export default function RootLayout({ children }) {
