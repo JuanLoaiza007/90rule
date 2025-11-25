@@ -6,7 +6,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Moon, Clock, RefreshCw, Sparkles } from "lucide-react";
 import { calculateWakeUpTimes, formatWakeTime } from "@/lib/sleepCalculator";
 import useLanguageStore from "@/lib/languageStore";
@@ -47,7 +46,7 @@ function WakeUpSuggestion({
       </div>
       <div className="flex items-center gap-2">
         <span
-          className="text-sm text-muted-foreground cursor-pointer hover:underline"
+          className="text-sm text-primary cursor-pointer hover:underline"
           onClick={onToggleTime}
         >
           {displayTime}
@@ -116,13 +115,15 @@ export default function SleepCalculator() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Moon className="w-5 h-5" />
-            {translations.sleepConfig}
+            <Moon className="w-5 h-5 text-purple-600" />
+            <span className="text-purple-600">{translations.sleepConfig}</span>
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
-            <Label htmlFor="bedTime">{translations.bedTime}</Label>
+            <Label htmlFor="bedTime" className="text-primary">
+              {translations.bedTime}
+            </Label>
             <div className="flex gap-2 mt-1">
               <Button
                 variant="outline"
@@ -143,7 +144,9 @@ export default function SleepCalculator() {
           </div>
 
           <div>
-            <Label htmlFor="latency">{translations.latency}</Label>
+            <Label htmlFor="latency" className="text-primary">
+              {translations.latency}
+            </Label>
             <Input
               id="latency"
               type="number"
@@ -165,8 +168,10 @@ export default function SleepCalculator() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Sparkles className="w-5 h-5" />
-              {translations.suggestedTimes}
+              <Sparkles className="w-5 h-5 text-purple-600" />
+              <span className="text-purple-600">
+                {translations.suggestedTimes}
+              </span>
             </CardTitle>
           </CardHeader>
           <CardContent>

@@ -64,13 +64,15 @@ export default function Home() {
       <div className="container mx-auto px-4 py-8">
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-2 mb-4">
-            <Clock className="w-8 h-8" />
-            <h1 className="text-4xl font-bold">{translations.title}</h1>
+            <Clock className="w-8 h-8 text-purple-600" />
+            <h1 className="text-4xl font-bold text-purple-600">
+              {translations.title}
+            </h1>
           </div>
           <div className="flex justify-center mb-2">
             <LanguageToggle />
           </div>
-          <p className="text-lg text-muted-foreground">{translations.slogan}</p>
+          <p className="text-lg text-primary">{translations.slogan}</p>
         </div>
         <SleepCalculator />
       </div>
