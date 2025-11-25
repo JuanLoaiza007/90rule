@@ -9,22 +9,24 @@ import { Badge } from "@/components/ui/badge";
 import { Moon, Clock } from "lucide-react";
 import { calculateWakeUpTimes, formatWakeTime } from "@/lib/sleepCalculator";
 
-function WakeUpSuggestion({ suggestion, use12Hour }) {
+function WakeUpSuggestion({
+  suggestion,
+  use12Hour,
+  showInHours,
+  onToggleHours,
+}) {
   const { cycles, totalMinutes, wakeTime } = suggestion;
 
-  let badgeVariant = "destructive"; // red
-  if (cycles >= 6) badgeVariant = "default"; // green-500
-  else if (cycles === 5)
-    badgeVariant = "secondary"; // lime-500, usar secondary que es bg-secondary
-  else if (cycles === 4) badgeVariant = "outline"; // yellow-500, usar outline que es bg-yellow?
-
-  // Necesito customizar colores, usar className
   const getBadgeClass = () => {
     if (cycles >= 6) return "bg-green-500 text-white";
     if (cycles === 5) return "bg-lime-500 text-white";
     if (cycles === 4) return "bg-yellow-500 text-black";
     return "bg-red-500 text-white";
   };
+
+  const displayTime = showInHours
+    ? `${(totalMinutes / 60).toFixed(1)}h`
+    : `${totalMinutes} min`;
 
   return (
     <div className="flex items-center justify-between p-3 border rounded-lg">
@@ -35,8 +37,11 @@ function WakeUpSuggestion({ suggestion, use12Hour }) {
         </span>
       </div>
       <div className="flex items-center gap-2">
-        <span className="text-sm text-muted-foreground">
-          {totalMinutes} min
+        <span
+          className="text-sm text-muted-foreground cursor-pointer hover:underline"
+          onClick={onToggleHours}
+        >
+          {displayTime}
         </span>
         <Badge className={getBadgeClass()}>
           {cycles} ciclo{cycles !== 1 ? "s" : ""}
@@ -50,6 +55,7 @@ export default function SleepCalculator() {
   const [bedTime, setBedTime] = useState("22:00");
   const [latency, setLatency] = useState(15);
   const [use12Hour, setUse12Hour] = useState(false);
+  const [showInHours, setShowInHours] = useState(false);
 
   const suggestions = useMemo(() => {
     const isValidTime = /^([01]\d|2[0-3]):([0-5]\d)$/.test(bedTime);
@@ -123,6 +129,8 @@ export default function SleepCalculator() {
                   key={index}
                   suggestion={suggestion}
                   use12Hour={use12Hour}
+                  showInHours={showInHours}
+                  onToggleHours={() => setShowInHours(!showInHours)}
                 />
               ))}
             </div>
