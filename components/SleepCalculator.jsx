@@ -95,8 +95,12 @@ export default function SleepCalculator() {
               type="number"
               min="0"
               max="120"
-              value={latency}
-              onChange={(e) => setLatency(Number(e.target.value))}
+              value={latency || ""}
+              placeholder="0"
+              onChange={(e) => {
+                const val = e.target.value;
+                setLatency(val === "" ? 0 : Number(val));
+              }}
               className="mt-1"
             />
           </div>
