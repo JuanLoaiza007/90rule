@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import SleepCalculator from "@/components/SleepCalculator";
 import LanguageToggle from "@/components/LanguageToggle";
 import ThemeToggle from "@/components/ThemeToggle";
-import { Clock } from "lucide-react";
+import { Clock, Github } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import useLanguageStore from "@/lib/languageStore";
 export default function Home() {
@@ -99,6 +99,17 @@ export default function Home() {
         </div>
         <SleepCalculator />
         <div className="text-center mt-12">
+          <a
+            href="https://github.com/juanloaiza007"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center w-10 h-10 border border-black rounded-full bg-black text-white"
+            aria-label="GitHub"
+          >
+            <Github className="w-5 h-5" />
+          </a>
+        </div>
+        <div className="text-center mt-4">
           <p className="text-sm text-muted-foreground">
             {translations.disclaimer}
           </p>
