@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Moon, Clock, RefreshCw, Sparkles } from "lucide-react";
 import { calculateWakeUpTimes, formatWakeTime } from "@/lib/sleepCalculator";
 
