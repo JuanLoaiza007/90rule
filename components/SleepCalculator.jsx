@@ -6,7 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Toggle } from "@/components/ui/toggle";
 import { Badge } from "@/components/ui/badge";
-import { Moon, Clock } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Moon, Clock, RefreshCw } from "lucide-react";
 import { calculateWakeUpTimes, formatWakeTime } from "@/lib/sleepCalculator";
 
 function WakeUpSuggestion({
@@ -53,7 +54,12 @@ function WakeUpSuggestion({
 }
 
 export default function SleepCalculator({ t }) {
-  const [bedTime, setBedTime] = useState("22:00");
+  const getCurrentTime = () => {
+    const now = new Date();
+    return now.toTimeString().slice(0, 5);
+  };
+
+  const [bedTime, setBedTime] = useState(() => getCurrentTime());
   const [latency, setLatency] = useState(15);
   const [use12Hour, setUse12Hour] = useState(false);
   const [showInHours, setShowInHours] = useState(false);
@@ -80,13 +86,23 @@ export default function SleepCalculator({ t }) {
         <CardContent className="space-y-4">
           <div>
             <Label htmlFor="bedTime">{t("bedTime")}</Label>
-            <Input
-              id="bedTime"
-              type="time"
-              value={bedTime}
-              onChange={(e) => setBedTime(e.target.value)}
-              className="mt-1"
-            />
+            <div className="flex gap-2 mt-1">
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => setBedTime(getCurrentTime())}
+                title={t("sync")}
+              >
+                <RefreshCw className="w-4 h-4" />
+              </Button>
+              <Input
+                id="bedTime"
+                type="time"
+                value={bedTime}
+                onChange={(e) => setBedTime(e.target.value)}
+                className="flex-1"
+              />
+            </div>
           </div>
 
           <div>
