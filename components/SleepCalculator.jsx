@@ -71,7 +71,13 @@ export default function SleepCalculator() {
   };
 
   const [bedTime, setBedTime] = useState(() => getCurrentTime());
-  const [latency, setLatency] = useState(15);
+  const [latency, setLatency] = useState(() => {
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("latency");
+      return stored ? Number(stored) : 15;
+    }
+    return 15;
+  });
   const [use12Hour, setUse12Hour] = useState(() => {
     if (typeof window !== "undefined") {
       return localStorage.getItem("use12Hour") === "true";
@@ -94,6 +100,10 @@ export default function SleepCalculator() {
   useEffect(() => {
     localStorage.setItem("showInHours", showInHours);
   }, [showInHours]);
+
+  useEffect(() => {
+    localStorage.setItem("latency", latency);
+  }, [latency]);
 
   const suggestions = useMemo(() => {
     const isValidTime = /^([01]\d|2[0-3]):([0-5]\d)$/.test(bedTime);
