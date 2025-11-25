@@ -14,6 +14,7 @@ function WakeUpSuggestion({
   use12Hour,
   showInHours,
   onToggleHours,
+  t,
 }) {
   const { cycles, totalMinutes, wakeTime } = suggestion;
 
@@ -25,8 +26,8 @@ function WakeUpSuggestion({
   };
 
   const displayTime = showInHours
-    ? `${(totalMinutes / 60).toFixed(1)}h`
-    : `${totalMinutes} min`;
+    ? `${(totalMinutes / 60).toFixed(1)}${t("hour")}`
+    : `${totalMinutes} ${t("min")}`;
 
   return (
     <div className="flex items-center justify-between p-3 border rounded-lg">
@@ -44,14 +45,14 @@ function WakeUpSuggestion({
           {displayTime}
         </span>
         <Badge className={getBadgeClass()}>
-          {cycles} ciclo{cycles !== 1 ? "s" : ""}
+          {cycles} {cycles === 1 ? t("cycles") : t("cyclesPlural")}
         </Badge>
       </div>
     </div>
   );
 }
 
-export default function SleepCalculator() {
+export default function SleepCalculator({ t }) {
   const [bedTime, setBedTime] = useState("22:00");
   const [latency, setLatency] = useState(15);
   const [use12Hour, setUse12Hour] = useState(false);
@@ -73,12 +74,12 @@ export default function SleepCalculator() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Moon className="w-5 h-5" />
-            Configuración del Sueño
+            {t("sleepConfig")}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
-            <Label htmlFor="bedTime">Hora de acostarte (HH:MM)</Label>
+            <Label htmlFor="bedTime">{t("bedTime")}</Label>
             <Input
               id="bedTime"
               type="time"
@@ -89,7 +90,7 @@ export default function SleepCalculator() {
           </div>
 
           <div>
-            <Label htmlFor="latency">Minutos para conciliar el sueño</Label>
+            <Label htmlFor="latency">{t("latency")}</Label>
             <Input
               id="latency"
               type="number"
@@ -106,7 +107,7 @@ export default function SleepCalculator() {
           </div>
 
           <div className="flex items-center justify-between">
-            <Label>Formato de hora</Label>
+            <Label>{t("timeFormat")}</Label>
             <Toggle
               pressed={use12Hour}
               onPressedChange={setUse12Hour}
@@ -123,7 +124,7 @@ export default function SleepCalculator() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Clock className="w-5 h-5" />
-              Horas Sugeridas para Despertarte
+              {t("suggestedTimes")}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -135,6 +136,7 @@ export default function SleepCalculator() {
                   use12Hour={use12Hour}
                   showInHours={showInHours}
                   onToggleHours={() => setShowInHours(!showInHours)}
+                  t={t}
                 />
               ))}
             </div>
