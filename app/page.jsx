@@ -21,7 +21,7 @@ export default function Home() {
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
+      setIsScrolled(window.scrollY > 15);
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
@@ -74,11 +74,11 @@ export default function Home() {
       <header
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
           isScrolled
-            ? "bg-background/80 backdrop-blur-md border-b"
+            ? "bg-background/80 backdrop-blur-sm border-b"
             : "bg-transparent"
         }`}
       >
-        <div className="container mx-auto px-4 py-8">
+        <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <ThemeToggle />
             <div className="flex items-center gap-2 absolute left-1/2 transform -translate-x-1/2">
@@ -92,13 +92,13 @@ export default function Home() {
         </div>
       </header>
       <div className="container mx-auto px-4 py-8">
-        <div className="pt-16 text-center mb-4">
-          <p className="text-base text-muted-foreground">
-            {translations.slogan}
+        <div className="pt-12 text-center mb-4">
+          <p className="text-sm text-muted-foreground">
+            &quot;{translations.slogan}&quot;
           </p>
         </div>
         <SleepCalculator />
-        <div className="text-center mt-12">
+        <div className="text-center mt-4">
           <a
             href="https://github.com/juanloaiza007"
             target="_blank"
