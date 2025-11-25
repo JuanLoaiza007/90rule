@@ -1,18 +1,26 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useLanguage } from "@/lib/useLanguage";
 
 export default function LanguageToggle() {
-  const { lang, setLanguage, t } = useLanguage();
-
-  const toggleLanguage = () => {
-    setLanguage(lang === "en" ? "es" : "en");
-  };
+  const { lang, setLanguage } = useLanguage();
 
   return (
-    <Button variant="outline" onClick={toggleLanguage} className="ml-4">
-      {t("language")}: {lang.toUpperCase()}
-    </Button>
+    <Select value={lang} onValueChange={setLanguage}>
+      <SelectTrigger className="w-20">
+        <SelectValue>{lang.toUpperCase()}</SelectValue>
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="en">EN - English</SelectItem>
+        <SelectItem value="es">ES - Español</SelectItem>
+      </SelectContent>
+    </Select>
   );
 }
