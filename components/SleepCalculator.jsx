@@ -62,12 +62,12 @@ export default function SleepCalculator() {
   }, [bedTime, latency]);
 
   return (
-    <div className="max-w-md mx-auto p-4">
+    <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Moon className="w-5 h-5" />
-            Calculadora de Ciclos de Sueño
+            Configuración del Sueño
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -105,10 +105,19 @@ export default function SleepCalculator() {
               {use12Hour ? "12h" : "24h"}
             </Toggle>
           </div>
+        </CardContent>
+      </Card>
 
-          {suggestions.length > 0 && (
+      {suggestions.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Clock className="w-5 h-5" />
+              Horas Sugeridas para Despertarte
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
             <div className="space-y-2">
-              <Label>Horas sugeridas para despertarte</Label>
               {suggestions.map((suggestion, index) => (
                 <WakeUpSuggestion
                   key={index}
@@ -117,9 +126,9 @@ export default function SleepCalculator() {
                 />
               ))}
             </div>
-          )}
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }
