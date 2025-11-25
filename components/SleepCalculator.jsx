@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Moon, Clock, RefreshCw, Sparkles } from "lucide-react";
 import { calculateWakeUpTimes, formatWakeTime } from "@/lib/sleepCalculator";
+import useLanguageStore from "@/lib/languageStore";
 
 function WakeUpSuggestion({
   suggestion,
@@ -16,7 +17,7 @@ function WakeUpSuggestion({
   showInHours,
   onToggleFormat,
   onToggleTime,
-  t,
+  translations,
 }) {
   const { cycles, totalMinutes, wakeTime } = suggestion;
 
@@ -28,8 +29,8 @@ function WakeUpSuggestion({
   };
 
   const displayTime = showInHours
-    ? `${(totalMinutes / 60).toFixed(1)}${t("hour")}`
-    : `${totalMinutes} ${t("min")}`;
+    ? `${(totalMinutes / 60).toFixed(1)}${translations.hour}`
+    : `${totalMinutes} ${translations.min}`;
 
   return (
     <div className="flex items-center justify-between p-3 border rounded-lg">
@@ -50,14 +51,16 @@ function WakeUpSuggestion({
           {displayTime}
         </span>
         <Badge className={getBadgeClass()}>
-          {cycles} {cycles === 1 ? t("cycles") : t("cyclesPlural")}
+          {cycles}{" "}
+          {cycles === 1 ? translations.cycles : translations.cyclesPlural}
         </Badge>
       </div>
     </div>
   );
 }
 
-export default function SleepCalculator({ t }) {
+export default function SleepCalculator() {
+  const { translations } = useLanguageStore();
   const getCurrentTime = () => {
     const now = new Date();
     return now.toTimeString().slice(0, 5);
@@ -102,18 +105,18 @@ export default function SleepCalculator({ t }) {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Moon className="w-5 h-5" />
-            {t("sleepConfig")}
+            {translations.sleepConfig}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
-            <Label htmlFor="bedTime">{t("bedTime")}</Label>
+            <Label htmlFor="bedTime">{translations.bedTime}</Label>
             <div className="flex gap-2 mt-1">
               <Button
                 variant="outline"
                 size="icon"
                 onClick={() => setBedTime(getCurrentTime())}
-                title={t("sync")}
+                title={translations.sync}
               >
                 <RefreshCw className="w-4 h-4" />
               </Button>
@@ -128,7 +131,7 @@ export default function SleepCalculator({ t }) {
           </div>
 
           <div>
-            <Label htmlFor="latency">{t("latency")}</Label>
+            <Label htmlFor="latency">{translations.latency}</Label>
             <Input
               id="latency"
               type="number"
@@ -151,7 +154,7 @@ export default function SleepCalculator({ t }) {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Sparkles className="w-5 h-5" />
-              {t("suggestedTimes")}
+              {translations.suggestedTimes}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -164,7 +167,7 @@ export default function SleepCalculator({ t }) {
                   showInHours={showInHours}
                   onToggleFormat={() => setUse12Hour(!use12Hour)}
                   onToggleTime={() => setShowInHours(!showInHours)}
-                  t={t}
+                  translations={translations}
                 />
               ))}
             </div>

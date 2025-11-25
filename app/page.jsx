@@ -5,11 +5,10 @@ import SleepCalculator from "@/components/SleepCalculator";
 import LanguageToggle from "@/components/LanguageToggle";
 import { Clock } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useLanguage } from "@/lib/useLanguage";
-import { LanguageProvider } from "@/lib/LanguageContext";
-
-function HomeContent() {
-  const { t } = useLanguage();
+import useLanguageStore from "@/lib/languageStore";
+export default function Home() {
+  const { translations, lang } = useLanguageStore();
+  console.log("Home render, lang:", lang, "title:", translations.title);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -66,23 +65,15 @@ function HomeContent() {
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-2 mb-4">
             <Clock className="w-8 h-8" />
-            <h1 className="text-4xl font-bold">{t("title")}</h1>
+            <h1 className="text-4xl font-bold">{translations.title}</h1>
           </div>
           <div className="flex justify-center mb-2">
             <LanguageToggle />
           </div>
-          <p className="text-lg text-muted-foreground">{t("slogan")}</p>
+          <p className="text-lg text-muted-foreground">{translations.slogan}</p>
         </div>
-        <SleepCalculator t={t} />
+        <SleepCalculator />
       </div>
     </div>
-  );
-}
-
-export default function Home() {
-  return (
-    <LanguageProvider>
-      <HomeContent />
-    </LanguageProvider>
   );
 }
