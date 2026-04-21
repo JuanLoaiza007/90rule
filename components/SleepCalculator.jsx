@@ -89,9 +89,9 @@ function WakeUpSuggestion({
 export default function SleepCalculator() {
   const { translations } = useLanguageStore();
   const { 
-    idealBedTime, setIdealBedTime, 
-    idealWakeTime, setIdealWakeTime,
-    latency, setLatency,
+    idealBedTime, 
+    idealWakeTime, 
+    latency: globalLatency, 
     use12Hour, setUse12Hour,
     showInHours, setShowInHours,
     includeLatencyInDuration
@@ -109,21 +109,33 @@ export default function SleepCalculator() {
     return "wakeUp";
   });
 
+  // Estados locales que solo afectan al cálculo actual
   const [bedTime, setBedTime] = useState(mode === "wakeUp" ? idealBedTime : idealWakeTime);
+  const [latency, setLatency] = useState(globalLatency);
   
   const [selectedCycles, setSelectedCycles] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
 
-  // Guardar modo y sincronizar con la hora ideal del store
+  // Sincronizar estados locales cuando cambian los ajustes globales en el modal
   useEffect(() => {
-    localStorage.setItem("calcMode", mode);
     setBedTime(mode === "wakeUp" ? idealBedTime : idealWakeTime);
   }, [mode, idealBedTime, idealWakeTime]);
 
-  // Si el usuario cambia la hora manualmente en el input principal, 
-  // solo afecta al cálculo actual, NO sobreescribe los ajustes globales.
+  useEffect(() => {
+    setLatency(globalLatency);
+  }, [globalLatency]);
+
+  // Guardar modo en localStorage (el modo sí es global para la UI)
+  useEffect(() => {
+    localStorage.setItem("calcMode", mode);
+  }, [mode]);
+
   const handleTimeChange = (newTime) => {
     setBedTime(newTime);
+  };
+
+  const handleLatencyChange = (newLatency) => {
+    setLatency(newLatency);
   };
 
   const suggestions = useMemo(() => {
@@ -257,7 +269,7 @@ export default function SleepCalculator() {
                 value={latency || ""}
                 placeholder="0"
                 onChange={(e) => {
-                  setLatency(e.target.value === "" ? 0 : Number(e.target.value));
+                  handleLatencyChange(e.target.value === "" ? 0 : Number(e.target.value));
                 }}
                 className="h-12 pl-4 pr-12 text-lg font-medium rounded-xl border-2 focus-visible:ring-purple-500"
               />
