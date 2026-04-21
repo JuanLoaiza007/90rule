@@ -15,8 +15,6 @@ export const metadata = {
   description:
     "A precise sleep cycle calculator designed to help you wake up feeling refreshed and energized",
   manifest: "/manifest.json",
-  themeColor: "#000000",
-  viewport: "width=device-width, initial-scale=1",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
@@ -25,6 +23,12 @@ export const metadata = {
   icons: {
     apple: "/90rule.svg",
   },
+};
+
+export const viewport = {
+  themeColor: "#000000",
+  width: "device-width",
+  initialScale: 1,
 };
 
 export default function RootLayout({ children }) {
