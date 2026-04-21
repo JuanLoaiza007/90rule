@@ -16,6 +16,8 @@ function WakeUpSuggestion({
   suggestion,
   use12Hour,
   showInHours,
+  includeLatencyInDuration,
+  latency,
   onToggleFormat,
   onToggleTime,
   onClickBadge,
@@ -23,6 +25,9 @@ function WakeUpSuggestion({
 }) {
   const { cycles, totalMinutes, wakeTime } = suggestion;
   const isRecommended = cycles === 5 || cycles === 6;
+
+  // Ajustar minutos según preferencia
+  const displayMinutes = includeLatencyInDuration ? totalMinutes : cycles * 90;
 
   const getBadgeClass = () => {
     if (cycles >= 6) return "bg-green-600 text-white";
@@ -32,8 +37,8 @@ function WakeUpSuggestion({
   };
 
   const displayTime = showInHours
-    ? `${(totalMinutes / 60).toFixed(1)}${translations.hour}`
-    : `${totalMinutes} ${translations.min}`;
+    ? `${(displayMinutes / 60).toFixed(1)}${translations.hour}`
+    : `${displayMinutes} ${translations.min}`;
 
   return (
     <div
@@ -88,7 +93,8 @@ export default function SleepCalculator() {
     idealWakeTime, setIdealWakeTime,
     latency, setLatency,
     use12Hour, setUse12Hour,
-    showInHours, setShowInHours
+    showInHours, setShowInHours,
+    includeLatencyInDuration
   } = useSettingsStore();
 
   const getCurrentTime = () => {
@@ -285,6 +291,8 @@ export default function SleepCalculator() {
                   suggestion={suggestion}
                   use12Hour={use12Hour}
                   showInHours={showInHours}
+                  includeLatencyInDuration={includeLatencyInDuration}
+                  latency={latency}
                   onToggleFormat={() => setUse12Hour(!use12Hour)}
                   onToggleTime={() => setShowInHours(!showInHours)}
                   onClickBadge={handleClickBadge}

@@ -15,13 +15,15 @@ import useLanguageStore from "@/lib/languageStore";
 import useSettingsStore from "@/lib/settingsStore";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export default function SettingsModal() {
   const { translations } = useLanguageStore();
   const { 
     idealBedTime, setIdealBedTime, 
     idealWakeTime, setIdealWakeTime,
-    latency, setLatency 
+    latency, setLatency,
+    includeLatencyInDuration, setIncludeLatencyInDuration
   } = useSettingsStore();
 
   return (
@@ -77,6 +79,23 @@ export default function SettingsModal() {
                   min
                 </span>
               </div>
+            </div>
+            <div className="flex items-center justify-between pt-2">
+              <div className="space-y-0.5">
+                <Label htmlFor="latency-toggle" className="text-sm cursor-pointer">
+                  {translations.includeLatencyLabel}
+                </Label>
+                <p className="text-[10px] text-muted-foreground">
+                  {includeLatencyInDuration 
+                    ? translations.includeLatencyActive 
+                    : translations.includeLatencyInactive}
+                </p>
+              </div>
+              <Checkbox
+                id="latency-toggle"
+                checked={includeLatencyInDuration}
+                onCheckedChange={(checked) => setIncludeLatencyInDuration(checked)}
+              />
             </div>
           </div>
 
