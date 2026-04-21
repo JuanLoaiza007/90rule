@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Moon, Clock, RefreshCw, Sparkles } from "lucide-react";
-import { calculateWakeUpTimes, formatWakeTime } from "@/lib/sleepCalculator";
+import { calculateWakeUpTimes, calculateBedTimes, formatWakeTime } from "@/lib/sleepCalculator";
 import useLanguageStore from "@/lib/languageStore";
 import CycleInfoDialog from "@/components/CycleInfoDialog";
 
@@ -21,12 +21,13 @@ function WakeUpSuggestion({
   translations,
 }) {
   const { cycles, totalMinutes, wakeTime } = suggestion;
+  const isRecommended = cycles === 5 || cycles === 6;
 
   const getBadgeClass = () => {
-    if (cycles >= 6) return "bg-green-500 text-white";
-    if (cycles === 5) return "bg-lime-500 text-white";
-    if (cycles === 4) return "bg-yellow-500 text-black";
-    return "bg-red-500 text-white";
+    if (cycles >= 6) return "bg-green-600 text-white";
+    if (cycles === 5) return "bg-emerald-500 text-white";
+    if (cycles === 4) return "bg-amber-500 text-white";
+    return "bg-rose-500 text-white";
   };
 
   const displayTime = showInHours
@@ -34,25 +35,41 @@ function WakeUpSuggestion({
     : `${totalMinutes} ${translations.min}`;
 
   return (
-    <div className="flex items-center justify-between p-3 border rounded-lg">
-      <div className="flex items-center gap-2">
-        <Clock className="w-4 h-4" />
-        <span
-          className="font-medium cursor-pointer hover:underline"
-          onClick={onToggleFormat}
-        >
-          {formatWakeTime(wakeTime, use12Hour)}
-        </span>
+    <div
+      className={`flex items-center justify-between p-3 border rounded-lg transition-all ${
+        isRecommended
+          ? "border-purple-400 bg-purple-50/50 dark:bg-purple-900/10 shadow-sm"
+          : "hover:bg-accent/50"
+      }`}
+    >
+      <div className="flex items-center gap-3">
+        <div className="flex flex-col">
+          <div className="flex items-center gap-2">
+            <Clock className="w-4 h-4 text-muted-foreground" />
+            <span
+              className="font-bold text-lg cursor-pointer hover:text-purple-600 transition-colors"
+              onClick={onToggleFormat}
+            >
+              {formatWakeTime(wakeTime, use12Hour)}
+            </span>
+          </div>
+          {isRecommended && (
+            <span className="text-[10px] font-bold uppercase tracking-wider text-purple-600 flex items-center gap-1">
+              <Sparkles className="w-2 h-2" />
+              {translations.recommended}
+            </span>
+          )}
+        </div>
       </div>
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-3">
         <span
-          className="text-sm text-primary cursor-pointer hover:underline"
+          className="text-xs text-muted-foreground font-medium cursor-pointer hover:underline"
           onClick={onToggleTime}
         >
           {displayTime}
         </span>
         <Badge
-          className={`${getBadgeClass()} cursor-pointer w-16 justify-center`}
+          className={`${getBadgeClass()} cursor-pointer min-w-20 justify-center h-8 text-xs font-semibold`}
           onClick={() => onClickBadge(cycles)}
         >
           {cycles}{" "}
@@ -90,8 +107,18 @@ export default function SleepCalculator() {
     }
     return false;
   });
+  const [mode, setMode] = useState(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("calcMode") || "wakeUp";
+    }
+    return "wakeUp";
+  });
   const [selectedCycles, setSelectedCycles] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
+
+  useEffect(() => {
+    localStorage.setItem("calcMode", mode);
+  }, [mode]);
 
   useEffect(() => {
     localStorage.setItem("use12Hour", use12Hour);
@@ -110,10 +137,12 @@ export default function SleepCalculator() {
     const isValidLatency = latency >= 0 && latency <= 120;
 
     if (isValidTime && isValidLatency) {
-      return calculateWakeUpTimes(bedTime, latency);
+      return mode === "wakeUp"
+        ? calculateWakeUpTimes(bedTime, latency)
+        : calculateBedTimes(bedTime, latency);
     }
     return [];
-  }, [bedTime, latency]);
+  }, [bedTime, latency, mode]);
 
   const handleClickBadge = (cycles) => {
     setSelectedCycles(cycles);
@@ -129,47 +158,120 @@ export default function SleepCalculator() {
             <span className="text-purple-600">{translations.sleepConfig}</span>
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div>
-            <Label htmlFor="bedTime" className="text-primary">
-              {translations.bedTime}
-            </Label>
-            <div className="flex gap-2 mt-1">
+        <CardContent className="space-y-6">
+          <div className="space-y-3">
+            <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+              <Sparkles className="w-4 h-4 text-purple-500" />
+              <span>{translations.mode}</span>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-2 p-1 bg-muted/30 rounded-2xl border-2 border-muted/50 cursor-pointer" onClick={() => setMode(mode === "wakeUp" ? "bedtime" : "wakeUp")}>
               <Button
-                variant="outline"
-                size="icon"
-                onClick={() => setBedTime(getCurrentTime())}
-                title={translations.sync}
+                variant="ghost"
+                size="sm"
+                className={`transition-all duration-400 ease-out rounded-xl relative pointer-events-none ${
+                  mode === "wakeUp"
+                    ? "flex-[1.2] py-4 bg-purple-600 text-white shadow-lg shadow-purple-500/30 border-none"
+                    : "flex-[0.8] py-2 bg-zinc-200/50 dark:bg-zinc-800/50 text-zinc-500 dark:text-zinc-400 border-transparent opacity-60"
+                }`}
               >
-                <RefreshCw className="w-4 h-4" />
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-2">
+                  <Moon
+                    className={`w-3.5 h-3.5 transition-all ${
+                      mode === "wakeUp" ? "scale-110" : "opacity-50"
+                    }`}
+                  />
+                  <span
+                    className={`font-bold transition-all ${
+                      mode === "wakeUp" ? "text-sm" : "text-xs"
+                    }`}
+                  >
+                    {translations.calculateWakeUp}
+                  </span>
+                </div>
               </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                className={`transition-all duration-400 ease-out rounded-xl relative pointer-events-none ${
+                  mode === "bedtime"
+                    ? "flex-[1.2] py-4 bg-purple-600 text-white shadow-lg shadow-purple-500/30 border-none"
+                    : "flex-[0.8] py-2 bg-zinc-200/50 dark:bg-zinc-800/50 text-zinc-500 dark:text-zinc-400 border-transparent opacity-60"
+                }`}
+              >
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-2">
+                  <Clock
+                    className={`w-3.5 h-3.5 transition-all ${
+                      mode === "bedtime" ? "scale-110" : "opacity-50"
+                    }`}
+                  />
+                  <span
+                    className={`font-bold transition-all ${
+                      mode === "bedtime" ? "text-sm" : "text-xs"
+                    }`}
+                  >
+                    {translations.calculateBedtime}
+                  </span>
+                </div>
+              </Button>
+            </div>
+          </div>
+
+          <div className="space-y-3 pt-2">
+            <Label
+              htmlFor="bedTime"
+              className="text-sm font-semibold flex items-center gap-2"
+            >
+              <div className="w-2 h-2 rounded-full bg-purple-600" />
+              {mode === "wakeUp"
+                ? translations.bedTimeLabel
+                : translations.wakeTimeLabel}
+            </Label>
+            <div className="flex gap-2">
               <Input
                 id="bedTime"
                 type="time"
                 value={bedTime}
                 onChange={(e) => setBedTime(e.target.value)}
-                className="flex-1"
+                className="h-12 text-lg font-medium rounded-xl border-2 focus-visible:ring-purple-500"
               />
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-12 w-12 rounded-xl border-2 shrink-0"
+                onClick={() => setBedTime(getCurrentTime())}
+                title={translations.sync}
+              >
+                <RefreshCw className="w-5 h-5 text-purple-600" />
+              </Button>
             </div>
           </div>
 
-          <div>
-            <Label htmlFor="latency" className="text-primary">
+          <div className="space-y-3">
+            <Label
+              htmlFor="latency"
+              className="text-sm font-semibold flex items-center gap-2"
+            >
+              <div className="w-2 h-2 rounded-full bg-purple-400" />
               {translations.latency}
             </Label>
-            <Input
-              id="latency"
-              type="number"
-              min="0"
-              max="120"
-              value={latency || ""}
-              placeholder="0"
-              onChange={(e) => {
-                const val = e.target.value;
-                setLatency(val === "" ? 0 : Number(val));
-              }}
-              className="mt-1"
-            />
+            <div className="relative">
+              <Input
+                id="latency"
+                type="number"
+                min="0"
+                max="120"
+                value={latency || ""}
+                placeholder="0"
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setLatency(val === "" ? 0 : Number(val));
+                }}
+                className="h-12 pl-4 pr-12 text-lg font-medium rounded-xl border-2 focus-visible:ring-purple-500"
+              />
+              <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-medium text-muted-foreground">
+                {translations.min}
+              </span>
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -180,7 +282,9 @@ export default function SleepCalculator() {
             <CardTitle className="flex items-center gap-2">
               <Sparkles className="w-5 h-5 text-purple-600" />
               <span className="text-purple-600">
-                {translations.suggestedTimes}
+                {mode === "wakeUp"
+                  ? translations.suggestedWakeUpTimes
+                  : translations.suggestedBedtimeTimes}
               </span>
             </CardTitle>
           </CardHeader>

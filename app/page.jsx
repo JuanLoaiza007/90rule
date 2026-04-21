@@ -109,12 +109,14 @@ export default function Home() {
             <Github className="w-5 h-5" />
           </a>
         </div>
-        <div className="text-center mt-4">
-          <p className="text-sm text-muted-foreground">
+      </div>
+      <footer className="fixed bottom-0 left-0 right-0 z-40 bg-background/60 backdrop-blur-md border-t py-3">
+        <div className="container mx-auto px-4 text-center">
+          <p className="text-[10px] md:text-xs text-muted-foreground leading-tight max-w-2xl mx-auto">
             {translations.disclaimer}
           </p>
         </div>
-      </div>
+      </footer>
     </div>
   );
 }
