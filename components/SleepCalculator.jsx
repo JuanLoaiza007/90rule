@@ -121,11 +121,9 @@ export default function SleepCalculator() {
   }, [mode, idealBedTime, idealWakeTime]);
 
   // Si el usuario cambia la hora manualmente en el input principal, 
-  // la guardamos como su nueva "ideal" para ese modo.
+  // solo afecta al cálculo actual, NO sobreescribe los ajustes globales.
   const handleTimeChange = (newTime) => {
     setBedTime(newTime);
-    if (mode === "wakeUp") setIdealBedTime(newTime);
-    else setIdealWakeTime(newTime);
   };
 
   const suggestions = useMemo(() => {

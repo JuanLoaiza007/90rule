@@ -14,12 +14,33 @@ import { Globe } from "lucide-react";
 export default function LanguageModal() {
   const { lang, setLanguage, translations } = useLanguageStore();
 
+  const getDynamicFlag = () => {
+    if (typeof window === "undefined") return "🇪🇸";
+    const browserLang = navigator.language || "";
+    
+    // Si el idioma es inglés, usamos USA
+    if (lang === "en") return "🇺🇸";
+    
+    // Si es español, intentamos detectar el país
+    if (lang === "es") {
+      const region = browserLang.split("-")[1]?.toUpperCase();
+      const countryFlags = {
+        "MX": "🇲🇽", "CO": "🇨🇴", "AR": "🇦🇷", "CL": "🇨🇱", "PE": "🇵🇪", 
+        "VE": "🇻🇪", "EC": "🇪🇨", "GT": "🇬🇹", "CU": "🇨🇺", "BO": "🇧🇴", 
+        "DO": "🇩🇴", "HN": "🇭🇳", "PY": "🇵🇾", "SV": "🇸🇻", "NI": "🇳🇮", 
+        "CR": "🇨🇷", "PA": "🇵🇦", "UY": "🇺🇾", "PR": "🇵🇷", "ES": "🇪🇸"
+      };
+      return countryFlags[region] || "🇪🇸";
+    }
+    return "🌐";
+  };
+
   const languages = [
     { code: "en", name: "English", flag: "🇺🇸" },
     { code: "es", name: "Español", flag: "🇪🇸" },
   ];
 
-  const currentFlag = languages.find((l) => l.code === lang)?.flag || "🌐";
+  const currentFlag = getDynamicFlag();
 
   return (
     <Dialog>
