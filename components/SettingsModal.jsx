@@ -16,20 +16,29 @@ import useSettingsStore from "@/lib/settingsStore";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
+import { APP_VERSION } from "@/lib/constants";
 
 export default function SettingsModal() {
   const { translations } = useLanguageStore();
-  const { 
-    idealBedTime, setIdealBedTime, 
-    idealWakeTime, setIdealWakeTime,
-    latency, setLatency,
-    includeLatencyInDuration, setIncludeLatencyInDuration
+  const {
+    idealBedTime,
+    setIdealBedTime,
+    idealWakeTime,
+    setIdealWakeTime,
+    latency,
+    setLatency,
+    includeLatencyInDuration,
+    setIncludeLatencyInDuration,
   } = useSettingsStore();
 
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="ghost" size="icon" className="rounded-full hover:bg-purple-100 dark:hover:bg-purple-900/30">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="rounded-full hover:bg-purple-100 dark:hover:bg-purple-900/30"
+        >
           <Settings className="w-5 h-5 text-purple-600" />
           <span className="sr-only">Settings</span>
         </Button>
@@ -48,19 +57,23 @@ export default function SettingsModal() {
               {translations.sleepConfig}
             </h3>
             <div className="flex items-center justify-between">
-              <Label className="text-sm">{translations.idealBedTimeSetting}</Label>
-              <Input 
-                type="time" 
-                value={idealBedTime} 
+              <Label className="text-sm">
+                {translations.idealBedTimeSetting}
+              </Label>
+              <Input
+                type="time"
+                value={idealBedTime}
                 onChange={(e) => setIdealBedTime(e.target.value)}
                 className="w-32 h-9"
               />
             </div>
             <div className="flex items-center justify-between">
-              <Label className="text-sm">{translations.idealWakeTimeSetting}</Label>
-              <Input 
-                type="time" 
-                value={idealWakeTime} 
+              <Label className="text-sm">
+                {translations.idealWakeTimeSetting}
+              </Label>
+              <Input
+                type="time"
+                value={idealWakeTime}
                 onChange={(e) => setIdealWakeTime(e.target.value)}
                 className="w-32 h-9"
               />
@@ -68,11 +81,15 @@ export default function SettingsModal() {
             <div className="flex items-center justify-between">
               <Label className="text-sm">{translations.latencySetting}</Label>
               <div className="relative">
-                <Input 
-                  type="number" 
-                  value={latency || ""} 
+                <Input
+                  type="number"
+                  value={latency || ""}
                   placeholder="0"
-                  onChange={(e) => setLatency(e.target.value === "" ? 0 : Number(e.target.value))}
+                  onChange={(e) =>
+                    setLatency(
+                      e.target.value === "" ? 0 : Number(e.target.value),
+                    )
+                  }
                   className="w-20 h-9 pr-8"
                 />
                 <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] text-muted-foreground">
@@ -82,19 +99,24 @@ export default function SettingsModal() {
             </div>
             <div className="flex items-center justify-between pt-2">
               <div className="space-y-0.5">
-                <Label htmlFor="latency-toggle" className="text-sm cursor-pointer">
+                <Label
+                  htmlFor="latency-toggle"
+                  className="text-sm cursor-pointer"
+                >
                   {translations.includeLatencyLabel}
                 </Label>
                 <p className="text-[10px] text-muted-foreground">
-                  {includeLatencyInDuration 
-                    ? translations.includeLatencyActive 
+                  {includeLatencyInDuration
+                    ? translations.includeLatencyActive
                     : translations.includeLatencyInactive}
                 </p>
               </div>
               <Checkbox
                 id="latency-toggle"
                 checked={includeLatencyInDuration}
-                onCheckedChange={(checked) => setIncludeLatencyInDuration(checked)}
+                onCheckedChange={(checked) =>
+                  setIncludeLatencyInDuration(checked)
+                }
               />
             </div>
           </div>
@@ -107,6 +129,12 @@ export default function SettingsModal() {
               </p>
             </div>
             <ThemeToggle />
+          </div>
+
+          <div className="pt-4 border-t flex items-center justify-center gap-2 opacity-40">
+            <span className="text-[10px] font-medium uppercase tracking-widest">
+              {translations.version} {APP_VERSION}
+            </span>
           </div>
         </div>
       </DialogContent>
