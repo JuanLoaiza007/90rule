@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import SleepCalculator from "@/components/SleepCalculator";
 import SettingsModal from "@/components/SettingsModal";
+import LanguageModal from "@/components/LanguageModal";
 import { Clock, Github } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import useLanguageStore from "@/lib/languageStore";
@@ -79,14 +80,17 @@ export default function Home() {
       >
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
+            <div className="z-10">
+              <SettingsModal />
+            </div>
             <div className="flex items-center gap-2 absolute left-1/2 transform -translate-x-1/2">
               <Clock className="w-6 h-6 text-purple-600" />
               <h1 className="text-2xl font-bold text-purple-600">
                 {translations.title}
               </h1>
             </div>
-            <div className="ml-auto">
-              <SettingsModal />
+            <div className="z-10">
+              <LanguageModal />
             </div>
           </div>
         </div>
@@ -98,7 +102,7 @@ export default function Home() {
           </p>
         </div>
         <SleepCalculator />
-        <div className="text-center mt-4">
+        <div className="text-center mt-4 pb-10 lg:pb-0">
           <a
             href="https://github.com/juanloaiza007"
             target="_blank"

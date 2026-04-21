@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Moon, Clock, RefreshCw, Sparkles } from "lucide-react";
 import { calculateWakeUpTimes, calculateBedTimes, formatWakeTime } from "@/lib/sleepCalculator";
 import useLanguageStore from "@/lib/languageStore";
+import useSettingsStore from "@/lib/settingsStore";
 import CycleInfoDialog from "@/components/CycleInfoDialog";
 
 function WakeUpSuggestion({
@@ -82,55 +83,44 @@ function WakeUpSuggestion({
 
 export default function SleepCalculator() {
   const { translations } = useLanguageStore();
+  const { 
+    idealBedTime, setIdealBedTime, 
+    idealWakeTime, setIdealWakeTime,
+    latency, setLatency,
+    use12Hour, setUse12Hour,
+    showInHours, setShowInHours
+  } = useSettingsStore();
+
   const getCurrentTime = () => {
     const now = new Date();
     return now.toTimeString().slice(0, 5);
   };
 
-  const [bedTime, setBedTime] = useState(() => getCurrentTime());
-  const [latency, setLatency] = useState(() => {
-    if (typeof window !== "undefined") {
-      const stored = localStorage.getItem("latency");
-      return stored ? Number(stored) : 15;
-    }
-    return 15;
-  });
-  const [use12Hour, setUse12Hour] = useState(() => {
-    if (typeof window !== "undefined") {
-      return localStorage.getItem("use12Hour") === "true";
-    }
-    return false;
-  });
-  const [showInHours, setShowInHours] = useState(() => {
-    if (typeof window !== "undefined") {
-      return localStorage.getItem("showInHours") === "true";
-    }
-    return false;
-  });
   const [mode, setMode] = useState(() => {
     if (typeof window !== "undefined") {
       return localStorage.getItem("calcMode") || "wakeUp";
     }
     return "wakeUp";
   });
+
+  const [bedTime, setBedTime] = useState(mode === "wakeUp" ? idealBedTime : idealWakeTime);
+  
   const [selectedCycles, setSelectedCycles] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
 
+  // Guardar modo y sincronizar con la hora ideal del store
   useEffect(() => {
     localStorage.setItem("calcMode", mode);
-  }, [mode]);
+    setBedTime(mode === "wakeUp" ? idealBedTime : idealWakeTime);
+  }, [mode, idealBedTime, idealWakeTime]);
 
-  useEffect(() => {
-    localStorage.setItem("use12Hour", use12Hour);
-  }, [use12Hour]);
-
-  useEffect(() => {
-    localStorage.setItem("showInHours", showInHours);
-  }, [showInHours]);
-
-  useEffect(() => {
-    localStorage.setItem("latency", latency);
-  }, [latency]);
+  // Si el usuario cambia la hora manualmente en el input principal, 
+  // la guardamos como su nueva "ideal" para ese modo.
+  const handleTimeChange = (newTime) => {
+    setBedTime(newTime);
+    if (mode === "wakeUp") setIdealBedTime(newTime);
+    else setIdealWakeTime(newTime);
+  };
 
   const suggestions = useMemo(() => {
     const isValidTime = /^([01]\d|2[0-3]):([0-5]\d)$/.test(bedTime);
@@ -231,7 +221,7 @@ export default function SleepCalculator() {
                 id="bedTime"
                 type="time"
                 value={bedTime}
-                onChange={(e) => setBedTime(e.target.value)}
+                onChange={(e) => handleTimeChange(e.target.value)}
                 className="h-12 text-lg font-medium rounded-xl border-2 focus-visible:ring-purple-500"
               />
               <Button
@@ -263,8 +253,7 @@ export default function SleepCalculator() {
                 value={latency || ""}
                 placeholder="0"
                 onChange={(e) => {
-                  const val = e.target.value;
-                  setLatency(val === "" ? 0 : Number(val));
+                  setLatency(e.target.value === "" ? 0 : Number(e.target.value));
                 }}
                 className="h-12 pl-4 pr-12 text-lg font-medium rounded-xl border-2 focus-visible:ring-purple-500"
               />
